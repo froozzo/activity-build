@@ -1,35 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Discord Island Game</title>
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: #000;
       width: 100%;
       height: 100%;
-      background: #000;
       overflow: hidden;
     }
-    #game-frame {
+    iframe {
       border: none;
       width: 100%;
       height: 100%;
       display: block;
     }
   </style>
+
+  <!-- Discord Embedded App SDK (desde Discord) -->
+  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.0.1/dist/sdk.min.js"></script>
+
+  <!-- SDK local -->
+  <script src="activity_sdk.js"></script>
+
 </head>
 <body>
-  <!-- Tu juego Godot original, sin tocarlo -->
-  <iframe
-    id="game-frame"
-    src="index.html"
-    allow="clipboard-read; clipboard-write"
-  ></iframe>
 
-  <!-- Aquí luego metemos Discord SDK y le pasamos el user a Godot -->
-  <!-- Por ahora lo dejamos así, solo cargando el iframe limpio -->
+  <!-- Iframe con tu juego Godot -->
+  <iframe id="game-frame" src="index.html"></iframe>
+
+  <script>
+    // Importante: poner tu APP ID de Discord aquí
+    const DISCORD_APP_ID = "TU_APP_ID_AQUI";
+
+    // Llamar la función del SDK local
+    window.discordAppId = 1443000817639755947;
+    initDiscordActivity(); 
+  </script>
 
 </body>
 </html>
