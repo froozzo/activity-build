@@ -29,8 +29,10 @@
   <!-- Iframe de tu juego -->
   <iframe id="game-frame" src="/game/index.html"></iframe>
 
-
 <script>
+/* ===========================================================
+   🔌 1. FUNCIÓN QUE LLAMA GODOT DESDE main.js (si quisieras usarla)
+   =========================================================== */
 window.sendAuthToGodot = function (payload) {
     if (window.__godot_callback) {
         window.__godot_callback(payload);
@@ -38,8 +40,24 @@ window.sendAuthToGodot = function (payload) {
         console.warn("Godot callback aún no está listo:", payload);
     }
 };
-</script>
 
+/* ===========================================================
+   🔥 2. LISTENER OBLIGATORIO PARA RECIBIR postMessage DEL IFRAME
+   =========================================================== */
+window.addEventListener("message", (event) => {
+    if (!event.data) return;
+
+    // Solo manejamos el paquete enviado desde main.js → iframe → wrapper
+    if (event.data.type === "discord-auth") {
+        if (window.__godot_callback) {
+            console.log("📨 Reenviando auth a Godot:", event.data);
+            window.__godot_callback(event.data);
+        } else {
+            console.warn("⚠️ Godot callback NO listo aún:", event.data);
+        }
+    }
+});
+</script>
 
 </body>
 </html>
