@@ -24,37 +24,41 @@
 </head>
 <body>
 
-  <!-- Script principal (Vite lo procesa) -->
+  <!-- Tu script principal (Discord SDK, OAuth, etc.) -->
 
-  <!-- Iframe de tu juego -->
+  <!-- Aquí vive Godot -->
   <iframe id="game-frame" src="/game/index.html"></iframe>
 
 <script>
 /* ===========================================================
-   🔌 1. FUNCIÓN QUE LLAMA GODOT DESDE main.js (si quisieras usarla)
+   1) FUNCION QUE main.js LLAMARÁ
    =========================================================== */
 window.sendAuthToGodot = function (payload) {
-    if (window.__godot_callback) {
-        window.__godot_callback(payload);
-    } else {
-        console.warn("Godot callback aún no está listo:", payload);
+    console.log("📨 Wrapper recibió auth de main.js:", payload);
+
+    const frame = document.getElementById("game-frame");
+
+    if (!frame || !frame.contentWindow) {
+        console.error("❌ iframe no listo");
+        return;
     }
+
+    // 🔥 Enviamos la data hacia el iframe donde vive Godot
+    frame.contentWindow.postMessage(payload, "*");
+
+    console.log("➡️ Enviado por postMessage al iframe");
 };
 
+
 /* ===========================================================
-   🔥 2. LISTENER OBLIGATORIO PARA RECIBIR postMessage DEL IFRAME
+   2) RECIBIR EL MENSAJE *DENTRO DEL IFRAME*
+   (Godot usará JSBridge para recibirlo)
    =========================================================== */
 window.addEventListener("message", (event) => {
     if (!event.data) return;
 
-    // Solo manejamos el paquete enviado desde main.js → iframe → wrapper
     if (event.data.type === "discord-auth") {
-        if (window.__godot_callback) {
-            console.log("📨 Reenviando auth a Godot:", event.data);
-            window.__godot_callback(event.data);
-        } else {
-            console.warn("⚠️ Godot callback NO listo aún:", event.data);
-        }
+        console.log("📩 Wrapper: mensaje desde iframe:", event.data);
     }
 });
 </script>
