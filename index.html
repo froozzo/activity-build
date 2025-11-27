@@ -23,14 +23,20 @@
 </head>
 <body>
 
-  <!-- IFRAME del juego -->
+  <!-- Discord Activity REQUIRED TAG -->
+  <discord-activity></discord-activity>
+
+  <!-- LOAD DISCORD SDK (REQUIRED) -->
+  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.2.0/dist/embedded-app-sdk.umd.min.js"></script>
+
+  <!-- YOUR SDK BRIDGE -->
+  <script src="discord_bridge.js"></script>
+
+  <!-- GAME IFRAME -->
   <iframe id="game-frame"
           src="game/index.html"
           sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock allow-forms">
   </iframe>
-
-  <!-- SDK Bridge (local) -->
-  <script src="discord_bridge.js"></script>
 
 </body>
 </html>
