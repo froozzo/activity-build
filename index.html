@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Discord Island Game</title>
-
+  <meta charset="UTF-8" />
+  <title>Discord Activity Wrapper</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #000;
       width: 100%;
       height: 100%;
+      background: black;
       overflow: hidden;
     }
+
     iframe {
-      border: none;
       width: 100%;
       height: 100%;
+      border: none;
       display: block;
     }
   </style>
+  <script type="module" crossorigin src="/assets/index-6WozEyLK.js"></script>
 </head>
 <body>
 
-  <!-- REQUIRED BY DISCORD ACTIVITIES -->
-  <discord-activity></discord-activity>
+  <!-- Script principal (Vite lo procesa) -->
 
-  <!-- DISCORD SDK (REQUIRED) -->
-  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.2.0/dist/embedded-app-sdk.umd.min.js"></script>
-
-  <!-- YOUR BRIDGE -->
-  <script src="discord_bridge.js"></script>
-
-  <!-- GAME IFRAME -->
-  <iframe id="game-frame"
-          src="game/index.html"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock allow-forms">
-  </iframe>
+  <!-- Iframe de tu juego -->
+  <iframe id="game-frame" src="/game/index.html"></iframe>
 
 </body>
 </html>
