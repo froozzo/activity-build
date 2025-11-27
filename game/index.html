@@ -213,6 +213,25 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 }());
 		</script>
+
+<script>
+    // Listener para recibir mensajes desde el wrapper
+    window.addEventListener("message", (event) => {
+        if (!event.data) return;
+
+        // Log para confirmar que el iframe recibe el mensaje
+        console.log("🎯 iframe recibió mensaje:", event.data);
+
+        // Si el callback que registró Godot está listo, enviamos la data
+        if (typeof window.__godot_callback === "function") {
+            console.log("🚀 Enviando mensaje a Godot:", event.data);
+            window.__godot_callback(event.data);
+        } else {
+            console.warn("⚠️ Godot callback aún NO está listo:", event.data);
+        }
+    });
+</script>
+
 	</body>
 </html>
 
