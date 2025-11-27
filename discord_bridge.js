@@ -1,18 +1,17 @@
 (async () => {
 
-    // ESPERAR a que DiscordSDK exista
+    // ========== ESPERAR POR EL SDK ==========
     const waitForSDK = () => new Promise(resolve => {
-        let attempts = 0;
+        let tries = 0;
         const check = () => {
             if (window.DiscordSDK) resolve(window.DiscordSDK);
-            else if (attempts++ < 50) setTimeout(check, 100);
+            else if (tries++ < 30) setTimeout(check, 100);
             else resolve(null);
         };
         check();
     });
 
     const DiscordSDK = await waitForSDK();
-
     if (!DiscordSDK) {
         console.error("❌ DiscordSDK no cargó.");
         return;
@@ -20,14 +19,30 @@
 
     console.log("✅ DiscordSDK detectado");
 
-    // Inicializar SDK con tu APP ID
+    // ========== INICIALIZAR SDK ==========
     const sdk = new DiscordSDK("1443000817639755947");
 
-    await sdk.ready();
+    try {
+        await Promise.race([
+            sdk.ready(),
+            new Promise((_, reject) => setTimeout(() => reject("ready_timeout"), 3000))
+        ]);
+
+        console.log("⚡ SDK READY!");
+    } catch (e) {
+        console.error("❌ Discord SDK no respondió:", e);
+    }
 
     console.log("🔄 Autenticando...");
 
-    const auth = await sdk.commands.authenticate({});
+    // ========== AUTENTICAR ==========
+    let auth;
+    try {
+        auth = await sdk.commands.authenticate({});
+    } catch (err) {
+        console.error("❌ Error al autenticar:", err);
+        return;
+    }
 
     if (auth && auth.user) {
         console.log("✅ Usuario autenticado:", auth.user.username);
@@ -37,6 +52,7 @@
 
         const frame = document.getElementById("game-frame").contentWindow;
 
+        // Enviar al juego (iframe)
         frame.postMessage({
             type: "discord-auth",
             user: auth.user
