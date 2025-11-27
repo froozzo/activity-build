@@ -1,67 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Discord Activity Wrapper</title>
+  <meta charset="UTF-8">
+  <title>Tu Juego</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: black;
-      overflow: hidden;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
+    html, body { margin:0; padding:0; width:100%; height:100%; background:black; overflow:hidden; }
+    iframe { width:100%; height:100%; border:none; display:block; }
   </style>
   <script type="module" crossorigin src="/assets/index-BLudooxj.js"></script>
 </head>
 <body>
+  <!-- Carga tu main.js igual que antes -->
 
-  <!-- Tu script principal (Discord SDK, OAuth, etc.) -->
-
-  <!-- Aquí vive Godot -->
+  <!-- Tu iframe para Godot, igual -->
   <iframe id="game-frame" src="./game/index.html"></iframe>
 
-<script>
-/* ===========================================================
-   1) FUNCION QUE main.js LLAMARÁ
-   =========================================================== */
-window.sendAuthToGodot = function (payload) {
-    console.log("📨 Wrapper recibió auth de main.js:", payload);
+  <script>
+    // ← NUEVO: Lee params de Discord y los hace globales (elimina errores rojos)
+    const urlParams = new URLSearchParams(window.location.search);
+    window.frameId = urlParams.get('frameId') || '0';
+    window.instanceId = urlParams.get('instanceId') || '0';
+    window.platform = urlParams.get('platform') || 'web';
+    console.log("Params de Discord cargados:", { frameId: window.frameId, instanceId: window.instanceId, platform: window.platform });
 
-    const frame = document.getElementById("game-frame");
-
-    if (!frame || !frame.contentWindow) {
-        console.error("❌ iframe no listo");
+    // Tu función original (sin tocar)
+    window.sendAuthToGodot = function (payload) {
+      console.log("Wrapper recibió auth de main.js:", payload);
+      const frame = document.getElementById("game-frame");
+      if (!frame || !frame.contentWindow) {
+        console.error("iframe no listo");
         return;
-    }
+      }
+      frame.contentWindow.postMessage(payload, "*");
+      console.log("Enviado por postMessage al iframe");
+    };
 
-    // 🔥 Enviamos la data hacia el iframe donde vive Godot
-    frame.contentWindow.postMessage(payload, "*");
-
-    console.log("➡️ Enviado por postMessage al iframe");
-};
-
-
-/* ===========================================================
-   2) RECIBIR EL MENSAJE *DENTRO DEL IFRAME*
-   (Godot usará JSBridge para recibirlo)
-   =========================================================== */
-window.addEventListener("message", (event) => {
-    if (!event.data) return;
-
-    if (event.data.type === "discord-auth") {
-        console.log("📩 Wrapper: mensaje desde iframe:", event.data);
-    }
-});
-</script>
-
+    // Tu listener original (sin tocar)
+    window.addEventListener("message", (event) => {
+      if (!event.data) return;
+      if (event.data.type === "discord-auth") {
+        console.log("Wrapper: mensaje desde iframe:", event.data);
+      }
+    });
+  </script>
 </body>
 </html>
