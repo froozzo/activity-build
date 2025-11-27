@@ -20,7 +20,7 @@
       display: block;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-Di3E3rt7.js"></script>
+  <script type="module" crossorigin src="/assets/index-4EEp3fbl.js"></script>
 </head>
 <body>
 
@@ -28,6 +28,15 @@
 
   <!-- Iframe de tu juego -->
   <iframe id="game-frame" src="/game/index.html"></iframe>
+
+
+<script>
+window.discordSendAuthToGodot = function (payload) {
+    if (window.__godotCallback) {
+        window.__godotCallback(payload);
+    }
+};
+</script>
 
 </body>
 </html>
