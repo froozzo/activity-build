@@ -1,0 +1,21 @@
+/game/*.wasm
+  Content-Type: application/wasm
+  Content-Disposition: inline
+  Cache-Control: no-transform
+
+/game/*.pck
+  Content-Type: application/octet-stream
+  Content-Disposition: inline
+  Cache-Control: no-transform
+
+/game/*.js
+  Content-Type: application/javascript
+  Cache-Control: no-transform
+
+/game/*.worklet.js
+  Content-Type: application/javascript
+  Cache-Control: no-transform
+
+/game/*.png
+  Content-Type: image/png
+  Cache-Control: no-transform
