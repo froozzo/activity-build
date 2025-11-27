@@ -1,56 +1,41 @@
-// =========== DISCORD BRIDGE FOR GODOT ===========
+// ======================================================
+// BRIDGE OFICIAL PARA DISCORD ACTIVITIES
+// ======================================================
 
-let discordSdk = null;
+(async () => {
 
-// Inicialización del SDK Local (activity_sdk.js)
-async function initDiscordSDK() {
-    try {
-        discordSdk = await window.discordSDK.init();
-        console.log("[Bridge] Discord SDK Ready:", discordSdk);
-        return true;
-    } catch (err) {
-        console.error("[Bridge] Error inicializando SDK:", err);
-        return false;
+    // Esperar a que Discord inyecte el SDK en window
+    const DiscordSDK = window.DiscordSDK;
+
+    if (!DiscordSDK) {
+        console.error("❌ DiscordSDK no está disponible aún.");
+        return;
     }
-}
 
-// Login LOCAL para actividad (NO remote)
-async function discordLogin() {
-    try {
-        const auth = await discordSdk.commands.authenticate({
-            client_id: YOUR_CLIENT_ID, // <- lo llenamos luego
-            response_type: "code",
-            state: "godot_login",
-            scope: ["identify"]
-        });
+    // Inicializar SDK con tu APP ID
+    const sdk = new DiscordSDK("1443000817639755947");
 
-        console.log("[Bridge] Auth response:", auth);
+    await sdk.ready();
 
-        // Guardamos user id
-        const user = await discordSdk.commands.getUser();
-        console.log("[Bridge] User:", user);
+    const auth = await sdk.commands.authenticate({});
 
-        // Enviamos datos a Godot
-        window.postMessage({
+    if (auth && auth.user) {
+        console.log("✅ Usuario autenticado:", auth.user.username);
+
+        // Exportar a window para Godot
+        window.discordUserID = auth.user.id;
+        window.discordUsername = auth.user.username;
+
+        // Enviar al iframe (tu juego)
+        const frame = document.getElementById("game-frame").contentWindow;
+
+        frame.postMessage({
             type: "discord-auth",
-            user_id: user.id,
-            username: user.username,
-            avatar: user.avatar
-        });
+            user: auth.user
+        }, "*");
 
-    } catch (err) {
-        console.error("[Bridge] Error en discordLogin:", err);
+    } else {
+        console.error("❌ No se pudo autenticar al usuario.");
     }
-}
 
-// Godot pedirá el login así: external_call("discord_login")
-window.addEventListener("message", (ev) => {
-    if (!ev.data) return;
-
-    if (ev.data.type === "godot-login") {
-        discordLogin();
-    }
-});
-
-// Inicializamos automáticamente
-initDiscordSDK();
+})();

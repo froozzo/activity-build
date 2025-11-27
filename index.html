@@ -20,29 +20,17 @@
       display: block;
     }
   </style>
-
-  <!-- SDK oficial de Discord -->
-  <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.0.1/dist/sdk.min.js"></script>
-
-  <!-- SDK local -->
-  <script src="activity_sdk.js"></script>
 </head>
-
 <body>
 
-<iframe id="game-frame"
-        src="game/index.html"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock allow-forms">
-</iframe>
+  <!-- IFRAME del juego -->
+  <iframe id="game-frame"
+          src="game/index.html"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock allow-forms">
+  </iframe>
 
-
-  <script>
-    const DISCORD_APP_ID = "1443000817639755947";
-
-    window.discordAppId = DISCORD_APP_ID;
-
-    initDiscordActivity();
-  </script>
+  <!-- SDK Bridge (local) -->
+  <script src="discord_bridge.js"></script>
 
 </body>
 </html>
