@@ -109,7 +109,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":38396,"index.wasm":36145869},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14652,"index.wasm":38034280},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -213,21 +213,6 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 }());
 		</script>
-
-<script>
-window.addEventListener("message", (event) => {
-    if (!event.data) return;
-
-    if (typeof window.__godot_callback === "function") {
-        console.log(" iframe: reenviando mensaje a Godot:", event.data);
-        window.__godot_callback(event.data);
-    } else {
-        console.warn(" Godot callback aún no está listo:", event.data);
-    }
-});
-</script>
-
-
 	</body>
 </html>
 
