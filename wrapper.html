@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Discord Island Game</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    #game-frame {
+      border: none;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tu juego Godot original, sin tocarlo -->
+  <iframe
+    id="game-frame"
+    src="build/index.html"
+    allow="clipboard-read; clipboard-write"
+  ></iframe>
+
+  <!-- Aquí luego metemos Discord SDK y le pasamos el user a Godot -->
+  <!-- Por ahora lo dejamos así, solo cargando el iframe limpio -->
+
+</body>
+</html>
