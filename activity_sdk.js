@@ -6,33 +6,46 @@ let discordSdk;
 let discordUserID = null;
 let discordUsername = null;
 
-// Exponer globalmente para Godot
+// Exponer globalmente
 window.discordUserID = null;
 window.discordUsername = null;
 
 async function initDiscord() {
-    // Carga el SDK embedded
     const { DiscordSDK } = window;
-    discordSdk = new DiscordSDK("your-app-id"); // <- Cambia esto en el wrapper, no aquí.
 
-    // Inicializar
+    // Usa el ID que mandaste desde el wrapper
+    discordSdk = new DiscordSDK(window.discordAppId);
+
+    // Esperar el ready()
     await discordSdk.ready();
 
-    // Autenticación del usuario dentro del Activity
+    // Intentar autenticar
     const auth = await discordSdk.commands.authenticate({});
 
     if (auth && auth.user) {
         discordUserID = auth.user.id;
         discordUsername = auth.user.username;
 
-        // Exponerlo globalmente para Godot
         window.discordUserID = discordUserID;
         window.discordUsername = discordUsername;
 
-        console.log("Discord user ID:", discordUserID);
-        console.log("Discord username:", discordUsername);
+        console.log("✔ Autenticado en Discord");
+        console.log("ID:", discordUserID);
+        console.log("User:", discordUsername);
+
+        // Enviar al juego (Godot)
+        const frame = document.getElementById("game-frame");
+        frame.contentWindow.postMessage(
+            {
+                type: "discord_auth",
+                id: discordUserID,
+                username: discordUsername
+            },
+            "*"
+        );
+
     } else {
-        console.error("No se pudo autenticar con Discord Activity.");
+        console.error("❌ No se pudo autenticar con Discord Activity.");
     }
 }
 

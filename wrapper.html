@@ -21,25 +21,44 @@
     }
   </style>
 
-  <!-- Discord Embedded App SDK (desde Discord) -->
+  <!-- SDK oficial de Discord -->
   <script src="https://cdn.jsdelivr.net/npm/@discord/embedded-app-sdk@1.0.1/dist/sdk.min.js"></script>
 
-  <!-- SDK local -->
+  <!-- Tu SDK local -->
   <script src="activity_sdk.js"></script>
 
 </head>
 <body>
 
-  <!-- Iframe con tu juego Godot -->
-  <iframe id="game-frame" src="index.html"></iframe>
+  <!--
+    ⚠️ IMPORTANTE ⚠️
+    Aquí va el IFRAME con sandbox especial.
+
+    allow-scripts    → deja correr tu juego Godot
+    allow-same-origin → permite mensajes postMessage
+    allow-popups, allow-forms → por si Godot usa input
+    allow-pointer-lock → para controles del juego
+  -->
+
+  <iframe id="game-frame"
+          src="index.html"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock allow-forms">
+  </iframe>
 
   <script>
-    // Importante: poner tu APP ID de Discord aquí
-    const DISCORD_APP_ID = "TU_APP_ID_AQUI";
+    // ============================
+    // CONFIGURACIÓN DEL WRAPPER
+    // ============================
 
-    // Llamar la función del SDK local
-    window.discordAppId = 1443000817639755947;
-    initDiscordActivity(); 
+    // 💥 Poner AQUÍ tu App ID real
+    const DISCORD_APP_ID = "1443000817639755947";
+
+    // Se expone globalmente para actividad local
+    window.discordAppId = DISCORD_APP_ID;
+
+    // Inicializa el SDK local
+    initDiscordActivity();
+
   </script>
 
 </body>
