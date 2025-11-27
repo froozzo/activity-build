@@ -20,7 +20,7 @@
       display: block;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-4EEp3fbl.js"></script>
+  <script type="module" crossorigin src="/assets/index-B5m0AmDU.js"></script>
 </head>
 <body>
 
@@ -31,12 +31,15 @@
 
 
 <script>
-window.discordSendAuthToGodot = function (payload) {
-    if (window.__godotCallback) {
-        window.__godotCallback(payload);
+window.sendAuthToGodot = function (payload) {
+    if (window.__godot_callback) {
+        window.__godot_callback(payload);
+    } else {
+        console.warn("Godot callback aún no está listo:", payload);
     }
 };
 </script>
+
 
 </body>
 </html>
