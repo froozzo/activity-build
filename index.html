@@ -1,117 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Tu Juego</title>
+  <meta charset="UTF-8" />
+  <title>Discord Activity Wrapper</title>
   <style>
-    html, body { margin:0; padding:0; width:100%; height:100%; background:black; overflow:hidden; }
-    iframe { width:100%; height:100%; border:none; display:block; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
   </style>
-  <script type="module" crossorigin src="/assets/index-Bfp3aW_-.js"></script>
+  <script type="module" crossorigin src="/assets/index-CIYuluDV.js"></script>
 </head>
 <body>
-  <!-- Carga tu main.js igual que antes -->
 
-  <!-- Tu iframe para Godot, igual -->
+  <!-- Tu script principal (Discord SDK, OAuth, etc.) -->
+
+  <!-- Aqui vive Godot -->
   <iframe id="game-frame" src="./game/index.html"></iframe>
 
-  <script>
-    // ← Params de Discord
-    const urlParams = new URLSearchParams(window.location.search);
-    window.frameId = urlParams.get('frameId') || '0';
-    window.instanceId = urlParams.get('instanceId') || '0';
-    window.platform = urlParams.get('platform') || 'web';
-    console.log("Params de Discord cargados:", { frameId: window.frameId, instanceId: window.instanceId, platform: window.platform });
+<script>
+/* ===========================================================
+   1) Funcion que main.js llamara para enviar auth
+   =========================================================== */
+window.sendAuthToGodot = function (payload) {
+    console.log("Wrapper recibio auth de main.js:", payload);
 
-    // VARIABLE GLOBAL PARA GUARDAR AUTH DATA
-    window.lastAuthData = null;
-    window.godotReady = false;
+    const frame = document.getElementById("game-frame");
 
-    // ← MODIFICADO: Función mejorada para enviar auth a Godot
-    window.sendAuthToGodot = function (payload) {
-      console.log("Wrapper recibió auth de main.js:", payload);
-      
-      // GUARDAR los datos por si Godot los pide después
-      window.lastAuthData = payload;
-      
-      const frame = document.getElementById("game-frame");
-      if (!frame || !frame.contentWindow) {
-        console.error("iframe no listo, pero auth data guardado para más tarde");
+    if (!frame || !frame.contentWindow) {
+        console.error("Iframe no listo");
         return;
-      }
+    }
 
-      // Estrategia de envío múltiple
-      const sendToFrame = () => {
-        try {
-          frame.contentWindow.postMessage(payload, "*");
-          console.log("Auth enviado a Godot via postMessage");
-        } catch (error) {
-          console.error("Error enviando a Godot:", error);
-        }
-      };
+    // Enviamos la data hacia el iframe donde vive Godot
+    frame.contentWindow.postMessage(payload, "*");
 
-      // Enviar inmediatamente
-      sendToFrame();
-      
-      // Reintentos por si Godot no está listo
-      setTimeout(sendToFrame, 500);
-      setTimeout(sendToFrame, 1000);
-      setTimeout(sendToFrame, 2000);
-    };
+    console.log("Enviado por postMessage al iframe");
+};
 
-    // ← MODIFICADO: Listener mejorado para mensajes del iframe
-    window.addEventListener("message", (event) => {
-      if (!event.data) return;
-      
-      console.log("Wrapper recibió mensaje:", event.data);
-      
-      // Mensaje de Godot indicando que está listo
-      if (event.data.type === "godot-ready") {
-        console.log("🎮 Godot está listo para recibir auth!");
-        window.godotReady = true;
-        
-        // Si tenemos auth data, enviarla inmediatamente
-        if (window.lastAuthData) {
-          console.log("Reenviando auth data a Godot...");
-          event.source.postMessage(window.lastAuthData, "*");
-        }
-      }
-      
-      // Mensajes de debug desde el iframe
-      if (event.data.type === "discord-auth") {
+
+/* ===========================================================
+   2) Logging de mensajes que regresen desde el iframe (debug)
+   =========================================================== */
+window.addEventListener("message", (event) => {
+    if (!event.data) return;
+
+    if (event.data.type === "discord-auth") {
         console.log("Wrapper: mensaje desde iframe:", event.data);
-      }
-    });
+    }
+});
+</script>
 
-    // ← NUEVO: Detectar cuando el iframe carga
-    document.getElementById("game-frame").addEventListener('load', function() {
-      console.log("🚀 IFrame de Godot cargado completamente");
-      window.godotReady = true;
-      
-      // Si tenemos auth data, enviarla cuando el iframe cargue
-      if (window.lastAuthData) {
-        console.log("Enviando auth data a Godot (onload)...");
-        const frame = document.getElementById("game-frame");
-        setTimeout(() => {
-          frame.contentWindow.postMessage(window.lastAuthData, "*");
-        }, 100);
-      }
-    });
-
-    // ← NUEVO: Función para forzar reenvío manual (debug)
-    window.forceResendAuth = function() {
-      if (window.lastAuthData) {
-        console.log("Forzando reenvío de auth...");
-        const frame = document.getElementById("game-frame");
-        if (frame && frame.contentWindow) {
-          frame.contentWindow.postMessage(window.lastAuthData, "*");
-        }
-      } else {
-        console.log("No hay auth data para reenviar");
-      }
-    };
-
-    console.log("Wrapper inicializado - Esperando auth data...");
-  </script>
 </body>
 </html>

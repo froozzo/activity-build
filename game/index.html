@@ -22,6 +22,29 @@ body {
 	display: block;
 }
 
+#auth-status {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	background: rgba(20, 24, 35, 0.85);
+	color: #e9eefc;
+	padding: 10px 12px;
+	border-radius: 10px;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	z-index: 2;
+	border: 1px solid rgba(94, 136, 255, 0.5);
+	backdrop-filter: blur(4px);
+}
+
+#auth-status.new-user {
+	border-color: rgba(46, 204, 113, 0.7);
+	color: #eaffef;
+}
+
 #canvas:focus {
 	outline: none;
 }
@@ -97,6 +120,8 @@ body {
 			Your browser does not support the canvas tag.
 		</canvas>
 
+		<div id="auth-status">Esperando autenticacion de Discord...</div>
+
 		<noscript>
 			Your browser does not support JavaScript.
 		</noscript>
@@ -109,7 +134,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":43084,"index.wasm":38034280},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":14684,"index.wasm":38034280},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -212,7 +237,30 @@ const engine = new Engine(GODOT_CONFIG);
 		}, displayFailureNotice);
 	}
 }());
+
+// Escuchar los datos de autenticacion enviados desde el wrapper (main/index.html)
+(function () {
+	const statusLabel = document.getElementById('auth-status');
+	if (!statusLabel) {
+		return;
+	}
+
+	function updateLabel(payload) {
+		const username = payload?.username || 'Usuario';
+		const isNew = Boolean(payload?.is_new);
+		statusLabel.textContent = isNew
+			? `${username}: Bienvenido, usuario nuevo!`
+			: `${username}: Bienvenido de nuevo`;
+		statusLabel.classList.toggle('new-user', isNew);
+	}
+
+	window.addEventListener('message', (event) => {
+		if (!event.data || event.data.type !== 'discord-auth') {
+			return;
+		}
+		updateLabel(event.data);
+	});
+})();
 		</script>
 	</body>
 </html>
-
