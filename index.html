@@ -20,7 +20,7 @@
       display: block;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-CwdysuZZ.js"></script>
+  <script type="module" crossorigin src="/assets/index-AeGCj31n.js"></script>
 </head>
 <body>
 
@@ -99,7 +99,7 @@ const _sendContextToIframe = (reason = "manual") => {
     _contextSendAttempts += 1;
     _frame.contentWindow.postMessage(_contextMessage, "*");
     console.log(`Sent discord-context to iframe (${reason}) attempt #${_contextSendAttempts}`, _contextMessage);
-    if (_contextSendAttempts >= 15 && _contextIntervalId) {
+    if (_contextSendAttempts >= 8 && _contextIntervalId) {
         clearInterval(_contextIntervalId);
         _contextIntervalId = null;
     }
