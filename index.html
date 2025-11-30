@@ -80,17 +80,55 @@ const _context = {
 
 console.log("Discord Activity Context:", _context);
 
-const _sendContextToIframe = () => {
-    if (!_frame || !_frame.contentWindow) return;
-    _frame.contentWindow.postMessage({
-        type: "discord-context",
-        payload: _context
-    }, "*");
+const _contextMessage = {
+    type: "discord-context",
+    payload: _context,
+    nonce: `${Date.now()}-${Math.random().toString(16).slice(2)}`
 };
 
-_frame.addEventListener("load", _sendContextToIframe);
-_sendContextToIframe();
-setTimeout(_sendContextToIframe, 500);
+let _contextSendAttempts = 0;
+let _contextAcked = false;
+let _contextIntervalId = null;
+
+const _sendContextToIframe = (reason = "manual") => {
+    if (_contextAcked) return;
+    if (!_frame || !_frame.contentWindow) {
+        console.warn("Iframe not ready for context yet");
+        return;
+    }
+    _contextSendAttempts += 1;
+    _frame.contentWindow.postMessage(_contextMessage, "*");
+    console.log(`Sent discord-context to iframe (${reason}) attempt #${_contextSendAttempts}`, _contextMessage);
+    if (_contextSendAttempts >= 15 && _contextIntervalId) {
+        clearInterval(_contextIntervalId);
+        _contextIntervalId = null;
+    }
+};
+
+_frame.addEventListener("load", () => {
+    _contextSendAttempts = 0;
+    _contextAcked = false;
+    _sendContextToIframe("iframe-load");
+});
+
+_contextIntervalId = setInterval(() => _sendContextToIframe("retry-interval"), 750);
+_sendContextToIframe("initial");
+setTimeout(() => _sendContextToIframe("delayed"), 500);
+
+window.addEventListener("message", (event) => {
+    if (!event.data) return;
+    if (event.data.type === "discord-auth") {
+        console.log("Wrapper: mensaje desde iframe:", event.data);
+    }
+    if (event.data.type === "discord-context-ack" && event.data.nonce === _contextMessage.nonce) {
+        _contextAcked = true;
+        if (_contextIntervalId) {
+            clearInterval(_contextIntervalId);
+            _contextIntervalId = null;
+        }
+        console.log("Godot acknowledged receipt of discord-context");
+    }
+});
 </script>
 
 </body>
