@@ -80,10 +80,16 @@ const _context = {
 
 console.log("Discord Activity Context:", _context);
 
-_frame.contentWindow.postMessage({
-    type: "discord-context",
-    payload: _context
-}, "*");
+const _sendContextToIframe = () => {
+    if (!_frame || !_frame.contentWindow) return;
+    _frame.contentWindow.postMessage({
+        type: "discord-context",
+        payload: _context
+    }, "*");
+};
+
+_frame.addEventListener("load", _sendContextToIframe);
+_sendContextToIframe();
 </script>
 
 </body>
