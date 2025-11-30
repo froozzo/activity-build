@@ -60,6 +60,30 @@ window.addEventListener("message", (event) => {
         console.log("Wrapper: mensaje desde iframe:", event.data);
     }
 });
+
+/* ===========================================================
+   3) Enviar contexto de la Activity a Godot
+   =========================================================== */
+const _frame = document.getElementById("game-frame");
+const _url = new URL(window.location.href);
+const _params = _url.searchParams;
+
+const _context = {
+    instance_id: _params.get("instance_id"),
+    guild_id: _params.get("guild_id"),
+    channel_id: _params.get("channel_id"),
+    frame_id: _params.get("frame_id"),
+    platform: _params.get("platform"),
+    location_id: _params.get("location_id"),
+    launch_id: _params.get("launch_id")
+};
+
+console.log("Discord Activity Context:", _context);
+
+_frame.contentWindow.postMessage({
+    type: "discord-context",
+    payload: _context
+}, "*");
 </script>
 
 </body>
