@@ -90,6 +90,7 @@ const _sendContextToIframe = () => {
 
 _frame.addEventListener("load", _sendContextToIframe);
 _sendContextToIframe();
+setTimeout(_sendContextToIframe, 500);
 </script>
 
 </body>
